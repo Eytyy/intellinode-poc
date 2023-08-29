@@ -1,11 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { nanoid } from 'nanoid';
 import type { NextApiRequest, NextApiResponse } from 'next';
-const {
-  Chatbot,
-  ChatGPTInput,
-  ChatGPTMessage,
-} = require('intellinode');
+import { Chatbot, ChatGPTInput, ChatGPTMessage } from 'intellinode';
 
 type RequestBody = {
   messages: {

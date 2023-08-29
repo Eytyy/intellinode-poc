@@ -1,11 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { nanoid } from 'nanoid';
 import type { NextApiRequest, NextApiResponse } from 'next';
-const {
+// @ts-nocheck
+import {
   Chatbot,
   LLamaReplicateInput,
   SupportedChatModels,
-} = require('intellinode');
+} from 'intellinode';
 
 type RequestBody = {
   messages: {
