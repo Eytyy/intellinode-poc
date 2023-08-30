@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import clsx from 'clsx';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-
+import { KeyReturn } from '@phosphor-icons/react';
 type ChatMessage = {
   role: string;
   content: string;
@@ -153,10 +153,12 @@ const Drawer = React.forwardRef<
             onKeyDown={onEnter}
           />
           <Button
-            className="absolute top-2 right-3"
+            size="icon"
+            className="absolute top-2 right-3 p-0"
             onClick={onSubmit}
+            variant="ghost"
           >
-            Send
+            <KeyReturn size={40} weight="fill" />
           </Button>
         </div>
 
@@ -184,24 +186,3 @@ const Drawer = React.forwardRef<
     </div>
   );
 });
-
-function ModelSwitch({
-  title,
-  value,
-  active,
-  onClick,
-}: {
-  title: string;
-  value: 'openai' | 'replicate';
-  active: boolean;
-  onClick: (value: 'openai' | 'replicate') => void;
-}) {
-  return (
-    <Button
-      variant={active ? 'default' : 'outline'}
-      onClick={() => onClick(value)}
-    >
-      {title}
-    </Button>
-  );
-}
