@@ -2,11 +2,7 @@
 import { nanoid } from 'nanoid';
 import type { NextApiRequest, NextApiResponse } from 'next';
 // @ts-nocheck
-import {
-  Chatbot,
-  LLamaReplicateInput,
-  SupportedChatModels,
-} from 'intellinode';
+import { Chatbot, LLamaReplicateInput } from 'intellinode';
 
 type RequestBody = {
   messages: {
@@ -25,10 +21,7 @@ export default async function handler(
     res.status(400).json({ error: 'invalid request body' });
     return;
   }
-  const bot = new Chatbot(
-    process.env.REPLICATE_API_KEY,
-    SupportedChatModels.REPLICATE
-  );
+  const bot = new Chatbot(process.env.REPLICATE_API_KEY, 'replicate');
   const input = new LLamaReplicateInput(
     'You are a helpful assistant.'
   );
