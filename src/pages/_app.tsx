@@ -1,23 +1,34 @@
-import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import '@/styles/globals.css';
-import type { AppProps } from 'next/app';
+import { ReactElement, ReactNode } from 'react';
+import { NextPage } from 'next';
 import { Inter } from 'next/font/google';
-import Link from 'next/link';
-const inter = Inter({ subsets: ['latin'] });
+import type { AppProps } from 'next/app';
 
-export default function App({ Component, pageProps }: AppProps) {
+import '@/styles/globals.css';
+
+const inter = Inter({ subsets: ['latin'] });
+import ReactQueryProvider from '@/providers/ReactQueryProvider';
+import { Layout } from '@/components/layouts';
+
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function App({
+  Component,
+  pageProps,
+}: AppPropsWithLayout) {
+  const getLayout =
+    Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
+
   return (
-    <div
-      className={`min-h-screen grid grid-rows-[min-content_auto] relative ${inter.className}`}
-    >
-      <ReactQueryProvider>
-        <header className="p-10 sticky top-0 z-10 backdrop-blur-md">
-          <Link href="/">
-            <h1 className="font-bold text-lg">Intellinode PoC</h1>
-          </Link>
-        </header>
-        <Component {...pageProps} />
-      </ReactQueryProvider>
-    </div>
+    <ReactQueryProvider>
+      <div className={`${inter.className}`}>
+        {getLayout(<Component {...pageProps} />)}
+      </div>
+    </ReactQueryProvider>
   );
 }
