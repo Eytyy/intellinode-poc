@@ -3,6 +3,8 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { nanoid } from 'nanoid';
 import clsx from 'clsx';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 type ChatMessage = {
   role: string;
@@ -29,7 +31,7 @@ export default function Chat() {
     'openai' | 'replicate'
   >('openai');
 
-  const input = useRef<HTMLInputElement>(null);
+  const input = useRef<HTMLTextAreaElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   const { mutate, isLoading } = useMutation({
@@ -116,7 +118,7 @@ export default function Chat() {
 }
 
 const Drawer = React.forwardRef<
-  HTMLInputElement,
+  HTMLTextAreaElement,
   {
     switchModel: (value: 'openai' | 'replicate') => void;
     isLoading: boolean;
@@ -127,6 +129,14 @@ const Drawer = React.forwardRef<
   { switchModel, isLoading, languageModel, onSubmit },
   ref
 ) {
+  const onEnter = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (event.key === 'Enter') {
+      onSubmit();
+    }
+  };
+
   return (
     <div className="sticky bottom-0 w-full p-10 left-0 z-20">
       {isLoading && (
@@ -134,41 +144,40 @@ const Drawer = React.forwardRef<
           Generating Response ...
         </div>
       )}
-      <div className="max-w-4xl mx-auto px-10">
-        <div className="flex gap-2 ">
-          <input
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                onSubmit();
-              }
-            }}
-            placeholder="Send a message"
+      <div className="max-w-4xl w-full mx-auto px-10">
+        <div className="w-full relative">
+          <Textarea
             ref={ref}
-            type="text"
-            className="border-2 flex-1 rounded-md p-4 bg-pageBG text-pageText border-faded"
+            className="resize-none min-h-0 pr-24 w-full"
+            placeholder="Send a message"
+            onKeyDown={onEnter}
           />
-          <button
-            className="bg-pageText text-pageBG w-20 flex-grow-0 rounded-md"
+          <Button
+            className="absolute top-2 right-3"
             onClick={onSubmit}
           >
             Send
-          </button>
+          </Button>
         </div>
 
         <div className="mt-4">
           <div className="flex gap-4 text-sm">
-            <ModelSwitch
-              onClick={switchModel}
-              title="OpenAi"
-              value="openai"
-              active={languageModel === 'openai'}
-            />
-            <ModelSwitch
-              onClick={switchModel}
-              title="Replicate"
-              value="replicate"
-              active={languageModel === 'replicate'}
-            />
+            <Button
+              variant={
+                languageModel === 'openai' ? 'default' : 'outline'
+              }
+              onClick={() => switchModel('openai')}
+            >
+              OpenAi
+            </Button>
+            <Button
+              variant={
+                languageModel === 'replicate' ? 'default' : 'outline'
+              }
+              onClick={() => switchModel('replicate')}
+            >
+              Replicate
+            </Button>
           </div>
         </div>
       </div>
@@ -188,15 +197,11 @@ function ModelSwitch({
   onClick: (value: 'openai' | 'replicate') => void;
 }) {
   return (
-    <button
-      role="button"
-      className={clsx(
-        'border-[2px] rounded-md px-4 py-1',
-        active && 'bg-pageText text-pageBG'
-      )}
+    <Button
+      variant={active ? 'default' : 'outline'}
       onClick={() => onClick(value)}
     >
       {title}
-    </button>
+    </Button>
   );
 }
