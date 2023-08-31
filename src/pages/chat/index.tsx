@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { KeyReturn } from '@phosphor-icons/react';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import Image from 'next/image';
 type ChatMessage = {
   role: string;
   content: string;
@@ -33,7 +35,6 @@ export default function Chat() {
   >('openai');
 
   const input = useRef<HTMLTextAreaElement>(null);
-  const endRef = useRef<HTMLDivElement>(null);
 
   const { mutate, isLoading } = useMutation({
     mutationFn: PostChatMessage,
@@ -67,52 +68,13 @@ export default function Chat() {
     setChat([]);
   };
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chat]);
-
   return (
     <>
       <main
         className={`grid grid-rows-[1fr,min-content] min-h-[calc(100vh-108px)] relative max-w-4xl w-full mx-auto`}
       >
-        <div className="py-10">
-          {chat.map((message) => (
-            <div
-              key={message._id}
-              className={clsx(
-                'flex gap-4 px-10 pb-10 items-top w-full'
-              )}
-            >
-              <div
-                className={clsx(
-                  'flex-grow-0 flex-shrink-0 w-10 h-10 rounded-full border-2 border-faded',
-                  message.role === 'user' ? 'bg-blue' : 'bg-pageText'
-                )}
-              ></div>
-              <div
-                className={clsx(
-                  'mt-2 flex-1 pb-10',
-                  'border-b-[1px] border-faded'
-                )}
-              >
-                <span className="font-semibold mr-2">
-                  {message.role.charAt(0).toUpperCase() +
-                    message.role.slice(1)}
-                </span>
-                {message.role === 'user' ? (
-                  <>{message.content}</>
-                ) : (
-                  <ReactMarkdown className="prose">
-                    {message.content}
-                  </ReactMarkdown>
-                )}
-              </div>
-            </div>
-          ))}
-          <div ref={endRef} />
-        </div>
-        <Drawer
+        <ChatConversation chat={chat} />
+        <ChatInput
           ref={input}
           switchModel={switchModel}
           isLoading={isLoading}
@@ -124,7 +86,69 @@ export default function Chat() {
   );
 }
 
-const Drawer = React.forwardRef<
+const ChatConversation = ({ chat }: { chat: ChatMessage[] }) => {
+  const endRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat]);
+
+  return (
+    <div className="py-10">
+      {chat.map((message) => (
+        <div
+          key={message._id}
+          className={clsx('flex gap-4 px-10 pb-10 items-top w-full')}
+        >
+          <ChatAvatar role={message.role} />
+          <div
+            className={clsx(
+              'mt-2 flex-1 pb-10',
+              'border-b-[1px] border-faded'
+            )}
+          >
+            <span className="font-semibold mr-2">
+              {message.role.charAt(0).toUpperCase() +
+                message.role.slice(1)}
+            </span>
+            {message.role === 'user' ? (
+              <>{message.content}</>
+            ) : (
+              <ReactMarkdown className="prose">
+                {message.content}
+              </ReactMarkdown>
+            )}
+          </div>
+        </div>
+      ))}
+      <div ref={endRef} />
+    </div>
+  );
+};
+
+const ChatAvatar = ({ role }: { role: string }) => {
+  const { user, isLoading, error } = useUser();
+  const showAvatart =
+    user?.picture && !isLoading && !error && role === 'user';
+  return (
+    <div
+      className={clsx(
+        'flex-grow-0 flex-shrink-0 w-10 h-10 rounded-full border-2 border-faded relative',
+        role === 'user' ? 'bg-muted' : 'bg-foreground'
+      )}
+    >
+      {showAvatart && (
+        <Image
+          src={user.picture!}
+          alt={user?.name || 'Profile Picture'}
+          layout="fill"
+          objectFit="cover"
+        />
+      )}
+    </div>
+  );
+};
+
+const ChatInput = React.forwardRef<
   HTMLTextAreaElement,
   {
     switchModel: (value: 'openai' | 'replicate') => void;
