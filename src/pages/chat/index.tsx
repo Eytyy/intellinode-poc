@@ -142,6 +142,7 @@ const ChatAvatar = ({ role }: { role: string }) => {
           alt={user?.name || 'Profile Picture'}
           layout="fill"
           objectFit="cover"
+          sizes="40px"
         />
       )}
     </div>
