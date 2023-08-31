@@ -2,6 +2,7 @@ import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
 import { Inter } from 'next/font/google';
 import type { AppProps } from 'next/app';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 
 import '@/styles/globals.css';
 
@@ -25,10 +26,12 @@ export default function App({
     Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
 
   return (
-    <ReactQueryProvider>
-      <div className={`${inter.className}`}>
-        {getLayout(<Component {...pageProps} />)}
-      </div>
-    </ReactQueryProvider>
+    <UserProvider>
+      <ReactQueryProvider>
+        <div className={`${inter.className}`}>
+          {getLayout(<Component {...pageProps} />)}
+        </div>
+      </ReactQueryProvider>
+    </UserProvider>
   );
 }
