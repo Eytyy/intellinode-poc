@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { KeyReturn } from '@phosphor-icons/react';
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 type ChatMessage = {
   role: string;
   content: string;
@@ -99,7 +100,13 @@ export default function Chat() {
                   {message.role.charAt(0).toUpperCase() +
                     message.role.slice(1)}
                 </span>
-                {message.content}
+                {message.role === 'user' ? (
+                  <>{message.content}</>
+                ) : (
+                  <ReactMarkdown className="prose">
+                    {message.content}
+                  </ReactMarkdown>
+                )}
               </div>
             </div>
           ))}

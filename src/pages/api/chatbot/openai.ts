@@ -22,7 +22,9 @@ export default async function handler(
   }
 
   let bot = new Chatbot(process.env.OPENAI_API_KEY);
-  let input = new ChatGPTInput('You are a helpful assistant.');
+  let input = new ChatGPTInput(
+    'You are a helpful assistant. respond in markdown format.'
+  );
 
   // add the previous messages
   try {
