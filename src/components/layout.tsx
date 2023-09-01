@@ -1,10 +1,10 @@
 import React, { PropsWithChildren } from 'react';
-import Header from '../header';
-import Container from '../container';
+import Header from './header';
+import Container from './container';
 
 type Props = {};
 
-export default function DefaultLayout({
+export default function Layout({
   children,
 }: PropsWithChildren<Props>) {
   return (

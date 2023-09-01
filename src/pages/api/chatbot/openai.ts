@@ -2,33 +2,29 @@
 import { nanoid } from 'nanoid';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Chatbot, ChatGPTInput, ChatGPTMessage } from 'intellinode';
-
-type RequestBody = {
-  messages: {
-    role: string;
-    content: string;
-  }[];
-};
+import { MessageArraySchema } from '@/lib/validators/message';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { messages }: RequestBody = req.body;
+  const { messages } = req.body;
 
-  if (!messages) {
+  const parsedMessages = MessageArraySchema.parse(messages);
+
+  if (!parsedMessages) {
     res.status(400).json({ error: 'invalid request body' });
     return;
   }
 
   let bot = new Chatbot(process.env.OPENAI_API_KEY);
   let input = new ChatGPTInput(
-    'You are a helpful assistant. respond in markdown format.'
+    'You are a helpful assistant. When responding, format links, code blocks, inline code, text highlighting such as bold in markdown format.'
   );
 
   // add the previous messages
   try {
-    messages.forEach((message) => {
+    parsedMessages.forEach((message) => {
       input.addMessage(
         new ChatGPTMessage(message.content, message.role)
       );

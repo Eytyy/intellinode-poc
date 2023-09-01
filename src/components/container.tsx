@@ -8,7 +8,7 @@ export default function Container({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen grid grid-rows-[min-content_auto] relative p-10">
+    <div className="min-h-screen grid grid-rows-[min-content_auto] relative">
       {children}
     </div>
   );

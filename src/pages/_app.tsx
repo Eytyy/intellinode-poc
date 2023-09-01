@@ -8,7 +8,7 @@ import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 import ReactQueryProvider from '@/providers/ReactQueryProvider';
-import { Layout } from '@/components/layouts';
+import Layout from '@/components/layout';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
